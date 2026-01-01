@@ -4,6 +4,15 @@
 - https://redis.io/glossary/rate-limiting/#Types_of_rate_limiting
 - https://medium.com/redis-with-raphael-de-lio/sliding-window-counter-rate-limiter-redis-java-1ba8901c02e5
 
+## RateLimiting implementation approaches
+
+### Why use Redis Functions over Lua?
+ - Maintainability: You don't have large string blocks of Lua inside your TypeScript files.
+ - Replication: Since the function is part of the database, it's automatically available on all replicas without having to reload it.
+ - Performance: Redis pre-compiles the function, making execution slightly faster than repeatedly sending EVAL with the full script.
+ - Atomicity: It maintains the same "stop-the-world" atomicity as Lua, preventing race conditions between the INCR and EXPIRE commands. 
+
+
 ## Fixed-Bucket RateLimiter
 
 **Fixed-window rate limiting:** This is a straightforward algorithm that counts the number of requests received within a fixed time window, such as one minute. Once the maximum number of requests is reached, additional requests are rejected until the next window begins. This algorithm is easy to implement and effective against DDoS attacks but may limit legitimate users.
