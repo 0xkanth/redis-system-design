@@ -6,6 +6,67 @@
 
 ## Fixed-Bucket RateLimiter
 
+### Register and Use
+
+1. Register the Function Library
+   You only need to run this command once (e.g., via redis-cli or a setup script) to load the library into Redis 
+
+```lua
+-- Registering a library named 'rate_limiter' with a function 'check_limit'
+FUNCTION LOAD "#!lua name=rate_limiter\n 
+redis.register_function('check_limit', function(keys, args)
+    local current = redis.call('INCR', keys[1])
+    if current == 1 then
+        redis.call('EXPIRE', keys[1], args[1])
+    end
+    return current
+end)"
+```
+
+```typescript
+import express, { Request, Response, NextFunction } from 'express';
+import { createClient } from 'redis';
+
+const app = express();
+const redisClient = createClient();
+redisClient.connect().catch(console.error);
+
+export const redisFunctionLimiter = async (req: Request, res: Response, next: NextFunction) => {
+    // 1. Normalize key (handling casing)
+    const userId = (req.headers['x-user-id'] as string || req.ip || 'anonymous').toLowerCase();
+    const key = `ratelimit:${userId}`;
+    
+    const limit = 10;
+    const windowSeconds = 60;
+
+    try {
+        // 2. Call the pre-registered Redis Function
+        // Syntax: FCALL <function_name> <num_keys> <key> <args>
+        const currentCount = await redisClient.fCall(
+            'check_limit', 
+            [key], 
+            [windowSeconds.toString()]
+        ) as number;
+
+        if (currentCount > limit) {
+            return res.status(429).json({ 
+                error: "Too many requests", 
+                retryAfter: windowSeconds 
+            });
+        }
+        
+        next();
+    } catch (err) {
+        console.error("Redis Function Error:", err);
+        next(); // Fail open for reliability
+    }
+};
+
+app.use(redisFunctionLimiter);
+```
+
+
+### Direct Use with backend
 
 ```typescript
     // FixedBucket Rate Limiter
