@@ -2,7 +2,7 @@
 
 ## References:
 - https://redis.io/glossary/rate-limiting/#Types_of_rate_limiting
-
+- https://medium.com/redis-with-raphael-de-lio/sliding-window-counter-rate-limiter-redis-java-1ba8901c02e5
 
 ## Fixed-Bucket RateLimiter
 
