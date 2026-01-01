@@ -129,3 +129,11 @@ app.use(redisFunctionLimiter);
     };
 ```
 
+
+
+## Sliding-window rate limiting
+
+This algorithm tracks the number of requests received in the recent past using a sliding window that moves over time. This algorithm is more flexible than fixed-window rate limiting and can adjust to spikes in traffic, making it a better choice for applications with varying usage patterns. However, it may not be as effective against sustained attacks.
+
+
+
