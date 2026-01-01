@@ -6,6 +6,8 @@
 
 ## Fixed-Bucket RateLimiter
 
+**Fixed-window rate limiting:** This is a straightforward algorithm that counts the number of requests received within a fixed time window, such as one minute. Once the maximum number of requests is reached, additional requests are rejected until the next window begins. This algorithm is easy to implement and effective against DDoS attacks but may limit legitimate users.
+
 ### Register and Use
 
 1. Register the Function Library
