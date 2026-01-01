@@ -1,4 +1,8 @@
-# redis-system-design
+# redis-rate-limiter-system-design
+
+## References:
+- https://redis.io/glossary/rate-limiting/#Types_of_rate_limiting
+
 
 ## Fixed-Bucket RateLimiter
 
