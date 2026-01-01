@@ -1,2 +1,0 @@
-# redis-system-design
-re
